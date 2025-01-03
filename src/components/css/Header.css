@@ -1,0 +1,31 @@
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+li{
+    width: fit-content;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #169839;
+}
+ul{
+    display: flex;
+    list-style: none;
+    font-size: 20px;
+}
+/* #logo{
+
+} */
+#logo-img{
+    height: 60px;
+    width: fit-content;
+}
+#header{
+    padding: 24px 60px 24px 60px;
+    display: flex;
+    justify-content: space-around;
+
+}
