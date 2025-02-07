@@ -1,0 +1,550 @@
+/* below style is for Footer.css */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f363d;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer; /* Adding pointer cursor */
+}
+
+.footer:hover {
+  background-color: #274560; /* Hover effect */
+  transform: scale(1.02);
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+/* below style is for Header.css */
+#header {
+  padding: 24px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #042650, #0f3b47); /* Gradient background */
+  box-shadow: 0px 6px 20px rgba(10,10, 10, 10); /* Soft shadow to elevate */
+  transition: all 1s ease; /* Smooth transition for hover effects */
+  background-color: #042650; /* Royal Blue */
+}
+#header-title{
+  color: #F3C623;
+}
+#logo-img {
+  height: 60px;
+  width: auto;
+  cursor: pointer; /* Cursor change on hover */
+  transition: transform 0.3s ease; /* Adding smooth transition */
+}
+#logo-img:hover {
+  transform: scale(1.1); /* Subtle zoom effect on hover */
+}
+
+#header-ul {
+  display: flex;
+  list-style: none;
+  font-size: 25px;
+}
+
+.header-li {
+  margin: 5px;
+}
+
+.link {
+  color: white;
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: 0.3s ease;
+  cursor: pointer; /* Cursor change on hover */
+  position: relative; /* To create space for an underline effect */
+  
+}
+
+
+.link:hover {
+  color: #070f29;
+  background-color: white;
+  border-radius: 20px;
+  transform: translateY(-3px); /* Slight lift effect */
+}
+
+.link:hover::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #070f29;
+  transition: width 0.3s ease;
+}
+
+.link:hover::after {
+  width: 100%; /* Expands to full width on hover */
+}
+
+
+.active-link {
+  color: #020d31;
+  background-color: rgb(255, 254, 254);
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+
+#header:hover {
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
+}
+
+/* Hover Glow Effect for Links */
+.link:hover {
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.5); /* Glowing effect */
+}
+
+/* below style is for Navbar.css */
+#content {
+  width: 100%;
+  overflow: hidden;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+.content-header {
+  text-align: center; /* Center text horizontally */
+  padding: 20px;
+}
+
+.content-header h1 {
+  font-size: 2.5rem;
+  color: #042650;
+  font-weight: bold;
+}
+
+.content-header p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 10px;
+}
+
+/* Text hover effect */
+.content-header:hover h1 {
+  color: #0f363d; /* Change text color */
+  text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Glowing effect */
+}
+
+
+.content-header:hover p {
+  color: #555; /* Darken the text slightly */
+  font-weight: 600; /* Bold the text on hover */
+}
+
+.content-header h1 {
+  font-size: 2.5rem;
+  color: #042650;
+  font-weight: bold;
+  transition: color 0.3s ease; /* Smooth color transition */
+}
+
+.content-header p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 10px;
+  transition: color 0.3s ease; /* Smooth color transition */
+}
+
+#swiper {
+  display: flex;
+  width: 400%;
+  animation: slide 10s infinite;
+}
+
+.swiper-part {
+  width: 25%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s ease; /* Adding smooth transition */
+}
+
+.swiper-part:hover {
+  transform: scale(1.05); /* Scale effect on hover */
+}
+
+.swiper-part-img {
+  max-width: 80%;
+  height: 55vh;
+  border-radius: 40px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease; /* Adding smooth transition */
+}
+
+.swiper-part-img:hover {
+  transform: scale(1.05); /* Scale effect on hover */
+}
+
+.cta-section {
+  max-width: 100%;
+  padding: 20px;
+  text-align: center;
+  background-color: #e0f7fa;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.cta-button {
+  padding: px 20px;
+  background-color: #0f363d;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #1f3549;
+  transform: scale(1.05); /* Slight scaling on hover */
+}
+
+/* ===== Important Links Section ===== */
+.important-links-section {
+  padding: 30px 20px;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.important-links-section h2 {
+  font-size: 2rem;
+  color: #042650;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.important-links-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.important-links-section li {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.important-links-section li a {
+  color: #226171;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.important-links-section li a:hover {
+  color: #030538;
+}
+
+/* Responsive Styling for Smaller Screens */
+@media (max-width: 768px) {
+  .important-links-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .important-links-section li {
+    font-size: 1rem;
+  }
+}
+
+
+
+/* ===== Enhanced Additional Info Section ===== */
+.additional-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 100%;
+  padding: 30px 20px;
+  background-color: #fff3e0;
+  border-radius: 15px;
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.additional-info:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.info-left {
+  flex: 0 0 48%; /* Takes up 48% of the width */
+}
+
+.info-right {
+  flex: 0 0 48%; /* Takes up 48% of the width */
+  padding-left: 20px; /* Space between columns */
+}
+
+.additional-info h2 {
+  font-size: 2rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.additional-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.additional-info li {
+  padding: 12px 0;
+  font-size: 1.1rem;
+  color: #555;
+  border-bottom: 1px solid #ddd;
+  transition: background-color 0.3s ease, padding-left 0.3s ease;
+  padding-left: 20px;
+}
+
+.additional-info li:last-child {
+  border-bottom: none;
+}
+
+.additional-info li:hover {
+  background-color: #f4f4f4;
+  padding-left: 30px;
+}
+
+.additional-info li i {
+  margin-right: 10px;
+  color: #4169E1;
+  font-size: 1.3rem;
+}
+
+.info-right p {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .additional-info {
+    flex-direction: column; /* Stacks the columns vertically on small screens */
+  }
+
+  .info-left, .info-right {
+    flex: 0 0 100%; /* Each section takes up 100% width on smaller screens */
+    padding-left: 0;
+    margin-bottom: 20px;
+  }
+
+  .cta-button {
+    width: 100%;
+    font-size: 1.2rem;
+  }
+
+  .header-li {
+    font-size: 1.5rem; /* Adjust header size */
+  }
+
+  .swiper-part-img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ===== Keyframes for Swiper Animation ===== */
+@keyframes slide {
+  0%, 20% {
+    transform: translateX(0);
+  }
+  25%, 45% {
+    transform: translateX(-25%);
+  }
+  50%, 70% {
+    transform: translateX(-50%);
+  }
+  75%, 95% {
+    transform: translateX(-75%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+/* below style is for Signup.css */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  height: fit-content;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #042650;
+  padding: 5px;
+  margin: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.form-error{
+  color: red;
+}
+input,
+select {
+  width: 300px;
+  height: 30px;
+  margin: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #042650;
+}
+
+.inputs {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+button {
+  width: 100px;
+  height: 30px;
+  margin: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #042650;
+  background-color: #042650;
+  color: white;
+  font-weight: bold;
+}
+
+
+
+/* below css is for userprofile */
+#user-profile{
+}
+#user-profile-content{
+  height: 70vh;
+  /* border: 1px solid #169839; */
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+
+
+
+/* below css if for usercard */
+#user-card-div{
+  width: 20%;
+  border: 2px solid #169839;
+  margin: 10px;
+  padding: 25px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+#user-img{
+  height: 150px;
+  width: 150px;
+  border-radius: 50%;
+  border: 1px solid #169839;
+}
+#user-card-ul{
+  list-style: none;
+}
+.user-card-li{
+  
+}
+
+/* below css is for usercontent */
+#user-content{
+  width: 80%;
+  border: 2px solid #169839;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+#user-content > h2{
+  text-align: center;
+  color: #169839;
+}
+#user-content > hr{
+  margin: 5px;
+}
+#user-content > #div1{
+  height: 100%;
+}
+#user-content > #div2{
+  height: fit-content;
+  display: flex;
+  justify-content: end;
+}
+#user-content > #div1 > p{
+  font-size: 20px;
+  margin: 5px;
+}
+/* below css is for complaintform.jsx */
+textarea{
+  width: 100%;
+  border: 2px solid #169839;
+  color: #169839;
+  font-size: 2em;
+}
+
+
+/* below css is for qrcodescanner.jsx */
+#qr-scanner-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+#reader {
+  width: 500px;
+  height: fit-content;
+  margin-bottom: 20px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.success {
+  color: green;
+  font-weight: bold;
+}
