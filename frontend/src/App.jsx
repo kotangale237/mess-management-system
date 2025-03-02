@@ -15,7 +15,6 @@ import NotFound from './components/NotFound'
 import StudentProfile from './components/Dashboard/StudentProfile'
 import StaffProfile from './components/Dashboard/StaffProfile'
 import AdminProfile from './components/Dashboard/AdminProfile'
-import CreatePoll from './components/Voting/CreatePoll'
 import BuyToken from './components/BuyToken'
 
 
@@ -35,7 +34,6 @@ const router = createBrowserRouter([
   { path: '/meal-history', element: <MealHistory /> },
   { path: '/qr-scanner', element: <QRCodeScanner /> },
   { path: '/buy-token', element: <BuyToken /> },
-  { path: '/create-poll', element: <CreatePoll /> },
   { path:'*', element:<NotFound /> }
 ]);
 

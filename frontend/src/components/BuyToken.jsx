@@ -3,16 +3,24 @@ import axios from "axios";
 import Header from "./Header";
 import Footer from "./Footer";
 
+const FIXED_PRICE_PER_PERSON = 50;
+
 const BuyToken = () => {
   const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [qrCode, setQrCode] = useState("");
+  const [totalTokens, setNumPeople] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [tokenId, setTokenId] = useState(null);
+  const [qrcode, setQrCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const canvasRef = useRef(null);
 
+  useEffect(() => {
+    setAmount(totalTokens ? totalTokens * FIXED_PRICE_PER_PERSON : 0);
+  }, [totalTokens]);
+
   const handlePayment = async () => {
-    if (!name || !amount) {
+    if (!name || !totalTokens) {
       setError("Please fill in all fields.");
       return;
     }
@@ -20,8 +28,9 @@ const BuyToken = () => {
     setError("");
 
     try {
-      const response = await axios.post("api/v1/token/buytoken", { name, amount });
-      setQrCode(response.data.qrCode);
+      const response = await axios.post('api/v1/token/purchase-token', { name, amount, totalTokens });
+      setQrCode(response.data.data.qrcode); 
+      setTokenId(response.data.data._id);
     } catch (error) {
       setError("Payment failed. Try again.");
       console.error("Payment Error:", error);
@@ -31,10 +40,10 @@ const BuyToken = () => {
   };
 
   useEffect(() => {
-    if (qrCode) {
+    if (qrcode && tokenId) {
       drawToken();
     }
-  }, [qrCode]);
+  }, [qrcode, tokenId]);
 
   const drawToken = () => {
     const canvas = canvasRef.current;
@@ -58,18 +67,18 @@ const BuyToken = () => {
     ctx.textAlign = "center";
     ctx.fillText("Meal Token", canvas.width / 2, 50);
 
-    // Name
-    ctx.font = "20px Arial";
-    ctx.fillText(`Name: ${name}`, canvas.width / 2, 100);
-
-    // Amount
-    ctx.fillText(`Amount: ₹${amount}`, canvas.width / 2, 140);
+    // Token Details
+    ctx.font = "18px Arial";
+    ctx.fillText(`Token ID: ${tokenId}`, canvas.width / 2, 90);
+    ctx.fillText(`Name: ${name}`, canvas.width / 2, 130);
+    ctx.fillText(`Amount: ₹${amount}`, canvas.width / 2, 170);
+    ctx.fillText(`No. of People: ${totalTokens}`, canvas.width / 2, 210);
 
     // Load and draw QR code
     const img = new Image();
-    img.src = qrCode;
+    img.src = qrcode;
     img.onload = () => {
-      ctx.drawImage(img, 100, 180, 200, 200);
+      ctx.drawImage(img, 100, 240, 200, 200);
     };
   };
 
@@ -77,7 +86,7 @@ const BuyToken = () => {
     const canvas = canvasRef.current;
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
-    link.download = "meal_ticket.png";
+    link.download = `meal_token_${tokenId}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -93,16 +102,25 @@ const BuyToken = () => {
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div>
-          <label>Amount:</label>
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
+          <label>Number of People:</label>
+          <input
+            type="number"
+            value={totalTokens}
+            onChange={(e) => setNumPeople(e.target.value)}
+            min="1"
+          />
+        </div>
+        <div>
+          <label>Amount (₹{FIXED_PRICE_PER_PERSON} per person):</label>
+          <input type="text" value={amount} readOnly />
         </div>
         <button onClick={handlePayment} disabled={loading}>
-          {loading ? "Processing..." : "Pay Now"}
+          {loading ? "Processing..." : "Buy Token"}
         </button>
 
         {error && <p className="error">{error}</p>}
 
-        {qrCode && (
+        {qrcode && tokenId && (
           <div>
             <h3>Meal Token</h3>
             <canvas ref={canvasRef} style={{ border: "1px solid black" }}></canvas>

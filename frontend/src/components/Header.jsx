@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import '../assets/styles.css'
-import logo from '../assets/images/MESSCHAIN.png'
+import logo from '../assets/images/IIITDMJ-Logo.jpg'
 
 const header = () => {
 
@@ -13,8 +13,8 @@ const header = () => {
   return (
     <div id='header' >
       <div id='logo'>
-        {/* <img id='logo-img' src={logo} alt="logo" /> */}
-        <h1 id='header-title'>MESSCHAIN</h1>
+        { <img id='logo-img' src={logo} alt="logo" /> }
+        <h1 id='header-title'></h1>
       </div>
       <ul id='header-ul'> 
         <li className='header-li'><NavLink to="/" className={cname}>Home</NavLink></li>

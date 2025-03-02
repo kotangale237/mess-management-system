@@ -16,13 +16,16 @@ const generateStudentQR = async (rollno) => {
     }
 };
 
-const generateMealTokenQR = async (tokenID) => {
+
+const generateMealTokenQR = async (token) => {
     try {
         const tokenData = JSON.stringify({
-          type: "token",
-          tokenId: tokenID
+            type: "token",
+            tokenId: token._id, 
+            name: token.name, 
+            totalTokens: token.totalTokens 
         });
-    
+
         const qrCodeDataURL = await QRCode.toDataURL(tokenData);
         return qrCodeDataURL;
     } catch (error) {

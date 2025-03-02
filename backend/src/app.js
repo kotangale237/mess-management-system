@@ -20,6 +20,7 @@ import staffRouter from './routes/staff.routes.js'
 import adminRouter from './routes/admin.routes.js'
 import attendanceRouter from "./routes/attendance.routes.js"
 import complaintRouter from "./routes/complaint.routes.js"
+import feedbackRouter from "./routes/feedback.routes.js"
 import votingRouter from "./routes/voting.routes.js"
 import tokenRouter from "./routes/token.routes.js"
 
@@ -30,6 +31,7 @@ app.use("/api/v1/student", studentRouter)
 app.use("/api/v1/staff", staffRouter)
 app.use("/api/v1/admin", adminRouter)
 app.use("/api/v1/complaint", complaintRouter)
+app.use("/api/v1/feedback", feedbackRouter)
 app.use("/api/v1/voting", votingRouter)
 app.use("/api/v1/token", tokenRouter)
 

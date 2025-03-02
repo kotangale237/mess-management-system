@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 const StudentContent = ({ content, user }) => {
@@ -7,11 +7,85 @@ const StudentContent = ({ content, user }) => {
   const [selectedCandidate, setSelectedCandidate] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  const qrRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [regarding, setRegarding] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleFeedback = async (e) => {
     e.preventDefault();
 
+    try {
+      if (!regarding || !feedback) {
+        setError("All fields are required!");
+        return;
+      }
+
+      const provider = user?._id;
+
+      const response = await axios.post("api/v1/feedback/add-feedback", {
+        provider,
+        regarding,
+        feedback,
+      });
+
+      setMessage(response.data.message);
+      setRegarding("");
+      setFeedback("");
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to submit feedback.");
+    }
+  };
+
+  const handleDownload = () => {
+    if (!user?.qrcode || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    const img = new Image();
+    img.src = user.qrcode;
+    img.crossOrigin = "Anonymous"; // Prevent CORS issues
+
+    img.onload = () => {
+      // Increased canvas size for better QR clarity in PNG
+      const qrSize = 500; // Large QR Code in PNG
+      canvas.width = qrSize + 100; // Extra width for text alignment
+      canvas.height = qrSize + 150; // Extra height for text below QR
+
+      // Fill Background
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Enlarged QR Code (Centered)
+      ctx.drawImage(img, 50, 20, qrSize, qrSize);
+
+      // Text Properties
+      ctx.font = "30px Arial";
+      ctx.fillStyle = "#000000";
+      ctx.textAlign = "center";
+
+      // Draw Student Name
+      ctx.fillText(user.name || "Student Name", canvas.width / 2, qrSize + 70);
+
+      // Draw Roll Number
+      ctx.fillText(`Roll No: ${user.rollno || "Unknown"}`, canvas.width / 2, qrSize + 110);
+
+      // Convert Canvas to Image & Download
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = `${user.name || "Student"}_QR_Code.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+  };
+
+  const handleComplaint = async (e) => {
+    e.preventDefault();
     try {
       const response = await axios.post("api/v1/complaint/add-complaint", { category, description });
       alert("Complaint submitted successfully!");
@@ -54,7 +128,7 @@ const StudentContent = ({ content, user }) => {
       <div id="user-content">
       <h2 className="text-4xl">Complaint</h2>
       <hr />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleComplaint}>
         <div>
           <label htmlFor="category">Regarding</label>
           <select
@@ -87,32 +161,47 @@ const StudentContent = ({ content, user }) => {
   } else if (content === 'feedback') {
     return (
       <div id="user-content">
-        <h2 className="text-4xl">Feedback</h2>
-        <hr />
-        <form action="">
-          <div>
-            <label htmlFor="">Regarding</label>
-            <select name="" id="">
-              <option value="">Food</option>
-              <option value="">Staff</option>
-              <option value="">Cleanliness</option>
-              <option value="">Other</option>
-            </select>
-          </div>
-          <textarea placeholder="Write your Feedback here!" name="" id="" cols="30" rows="2"></textarea>
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-    );
+      <h2 className="text-4xl">Feedback</h2>
+      <hr />
+      {message && <p style={{ color: "green" }}>{message}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleFeedback}>
+        <div>
+          <label htmlFor="regarding">Regarding</label>
+          <select id="regarding" name="regarding" value={regarding} onChange={(e) => setRegarding(e.target.value)}>
+            <option value="">Select</option>
+            <option value="Food">Food</option>
+            <option value="Staff">Staff</option>
+            <option value="Cleanliness">Cleanliness</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <textarea
+          placeholder="Write your feedback here!"
+          name="feedback"
+          id="feedback"
+          cols="30"
+          rows="2"
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+        ></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
   } else if (content === 'qr-code') {
     return (
       <div id="user-content">
-        <h2 className="text-4xl">QR Code</h2>
-        <hr />
-        <div id='user-qrcode-div'>
-          <img src={user?.qrcode} alt="Student QR Code" />
-        </div>
+      <h2>QR Code</h2>
+      <hr />
+      <div>
+        <img ref={qrRef} src={user?.qrcode} alt="Student QR Code" />
       </div>
+
+      <button onClick={handleDownload}>Download</button>
+
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+    </div>
     );
   }
   else if(content == 'vote'){
@@ -158,7 +247,7 @@ const StudentContent = ({ content, user }) => {
     );
   } else {
     return (
-      <div id="user-info">
+      <div id="user-content">
         <h2>User Info</h2>
         <hr />
         <div id="user-info-div">

@@ -63,7 +63,7 @@ contract MessAttendance {
     }
 
     // Function to purchase a meal token
-    function purchaseToken(uint256 numPeople) public {
+    function purchaseToken(uint256 numPeople) public returns (uint256) {
         mealTokens[tokenCounter] = MealToken({
             tokenId: tokenCounter,
             numPeople: numPeople,
@@ -72,9 +72,12 @@ contract MessAttendance {
             purchaseTimestamp: block.timestamp
         });
 
-        emit TokenPurchased(tokenCounter, numPeople, block.timestamp);
+        emit TokenPurchased(tokenCounter, numPeople, block.timestamp); // Keep this for record
         tokenCounter++;
+
+        return tokenCounter - 1; // Return the purchased token ID
     }
+
 
     // Function to redeem a meal token using token ID
     function redeemToken(uint256 tokenId) public {

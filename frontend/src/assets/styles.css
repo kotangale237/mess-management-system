@@ -1,9 +1,13 @@
-/* below style is for Footer.css */
+
+
+/* ===== Global Reset ===== */
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
+/* ===== Footer Styles ===== */
 .footer {
   position: relative;
   bottom: 0;
@@ -25,9 +29,9 @@
   transition: background-color 0.3s, transform 0.2s ease;
 }
 
-/* below style is for Header.css */
+/* ===== Header Styles ===== */
 #header {
-  padding: 24px 60px;
+  padding: 0px 65px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -36,12 +40,11 @@
   transition: all 1s ease; /* Smooth transition for hover effects */
   background-color: #042650; /* Royal Blue */
 }
-#header-title{
-  color: #F3C623;
-}
+
 #logo-img {
-  height: 60px;
-  width: auto;
+  mix-blend-mode:luminosity;
+  mix-blend-mode:multiply;
+  height: auto;
   cursor: pointer; /* Cursor change on hover */
   transition: transform 0.3s ease; /* Adding smooth transition */
 }
@@ -50,9 +53,10 @@
 }
 
 #header-ul {
+  padding: 20px 60px;
   display: flex;
   list-style: none;
-  font-size: 25px;
+  font-size: 28px;
 }
 
 .header-li {
@@ -109,7 +113,8 @@
   text-shadow: 0 0 8px rgba(0, 0, 0, 0.5); /* Glowing effect */
 }
 
-/* below style is for Navbar.css */
+
+/* ===== Swiper / Content Section ===== */
 #content {
   width: 100%;
   overflow: hidden;
@@ -162,7 +167,7 @@
 
 #swiper {
   display: flex;
-  width: 400%;
+  width: 200%;
   animation: slide 10s infinite;
 }
 
@@ -329,7 +334,7 @@
 
 .additional-info li i {
   margin-right: 10px;
-  color: #4169E1;
+  color: #042650;
   font-size: 1.3rem;
 }
 
@@ -383,15 +388,9 @@
     transform: translateX(0);
   }
 }
-/* below style is for Signup.css */
-* {
-  margin: 0;
-  padding: 0;
-}
 
+/* ===== Signup Form Styles ===== */
 .container {
-  height: fit-content;
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -412,9 +411,7 @@ form {
   justify-content: center;
   align-items: center;
 }
-.form-error{
-  color: red;
-}
+
 input,
 select {
   width: 300px;
@@ -423,14 +420,19 @@ select {
   padding: 5px;
   border-radius: 5px;
   border: 1px solid #042650;
+  transition: border 0.3s ease;
 }
 
-.inputs {
-  height: 50px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+input:focus,
+select:focus {
+  border-color: #042650; /* Border color change on focus */
+  box-shadow: 0 0 5px rgba(65, 105, 225, 0.5); /* Soft glow effect */
+}
+
+/* Placeholder Text */
+input::placeholder, select::placeholder {
+  font-style: italic;
+  color: #777;
 }
 
 button {
@@ -443,9 +445,467 @@ button {
   background-color: #042650;
   color: white;
   font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #07326f;
+}
+
+/* ===== User Profile & Card Styling ===== */
+#user-card-div,
+#user-content {
+  border: 2px solid #042650;;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #f4f4f4;
+}
+
+#user-img {
+  border-radius: 50%;
+  border: 3px solid #042650;;
+  padding: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+#user-img:hover {
+  transform: scale(1.1); /* Slight zoom on hover */
+}
+
+#user-content > h2 {
+  color: #042650;;
+}
+
+textarea {
+  border: 2px solid #041a5b;
+  color: #05237c;
+  padding: 10px;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+textarea:focus {
+  border-color: #0a2465; /* Border color change on focus */
+}
+
+/* Tablet (Portrait) - 600px to 768px */
+@media (max-width: 768px) {
+  /* Adjust header layout for smaller screens */
+  #header {
+    padding:0%;
+    flex-direction: column;
+    justify-content: flex;
+    align-items:center;
+  }
+
+  #header-ul {
+    font-size: 10px;
+    flex-direction: row;
+    align-items:end;
+    padding: 10px;
+  }
+
+  /* Adjust swiper-part layout for smaller screens */
+  .swiper-part {
+    width: 15%;
+    height:10%;
+    padding: 10px;
+  }
+
+  .swiper-part-img {
+    max-width: 80%;
+    height: 10%;
+  }
+
+  /* Make CTA button full width on mobile */
+  .cta-button {
+    width: 20%;
+    font-size: 1.2rem;
+  }
+
+  /* Adjust logo size for smaller screens */
+  #logo-img {
+    height: 90px;
+  }
+
+  /* Adjust important links section font size */
+  .important-links-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .important-links-section li {
+    font-size: 1rem;
+  }
+
+  /* Stack additional-info sections for smaller screens */
+  .additional-info {
+    flex-direction: column;
+  }
+
+  .info-left,
+  .info-right {
+    flex: 0 0 100%;
+    padding-left: 0;
+    margin-bottom: 20px;
+  }
+
+  /* Adjust header menu font size */
+  .header-li {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile (Landscape) - 480px to 600px */
+@media (max-width: 600px) {
+  /* Adjust header layout for smaller screens */
+  #header {
+    padding: 20px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #header-ul {
+    font-size: 16px;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+  }
+
+  /* Adjust swiper-part layout for smaller screens */
+  .swiper-part {
+    width: 100%;
+    padding: 8px;
+  }
+
+  .swiper-part-img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Adjust the font size in the CTA button */
+  .cta-button {
+    width: 100%;
+    font-size: 1.1rem;
+  }
+
+  /* Adjust logo size for smaller screens */
+  #logo-img {
+    height: 45px;
+  }
+
+  /* Make text in the important links section smaller */
+  .important-links-section h2 {
+    font-size: 1.6rem;
+  }
+
+  .important-links-section li {
+    font-size: 0.9rem;
+  }
+
+  /* Adjust additional-info section stacking */
+  .additional-info {
+    flex-direction: column;
+  }
+
+  .info-left,
+  .info-right {
+    flex: 0 0 100%;
+    padding-left: 0;
+    margin-bottom: 15px;
+  }
+
+  /* Adjust header menu font size */
+  .header-li {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile (Portrait) - 320px to 480px */
+@media (max-width: 480px) {
+  /* Header adjustments for smaller mobile devices */
+  #header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #header-ul {
+    font-size: 14px;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8px;
+  }
+
+  /* Adjust swiper-part layout for small mobile screens */
+  .swiper-part {
+    width: 50%;
+    padding: 6px;
+  }
+
+  .swiper-part-img {
+    max-width: 50%;
+    height: auto;
+  }
+
+  /* Adjust CTA button font size and full width */
+  .cta-button {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  /* Adjust logo size for very small screens */
+  #logo-img {
+    height: 40px;
+  }
+
+  /* Adjust important links section for smaller text */
+  .important-links-section h2 {
+    font-size: 1.4rem;
+  }
+
+  .important-links-section li {
+    font-size: 0.8rem;
+  }
+
+  /* Stacked layout for additional-info on small screens */
+  .additional-info {
+    flex-direction: column;
+  }
+
+  .info-left,
+  .info-right {
+    flex: 0 0 100%;
+    padding-left: 0;
+    margin-bottom: 10px;
+  }
+
+  /* Adjust header menu font size */
+  .header-li {
+    font-size: 1rem;
+  }
 }
 
 
+/* ===== Mobile (375x667) Styles with Smaller Images ===== */
+@media (max-width: 375px) and (max-height: 667px) {
+  /* Header adjustments for smaller mobile devices */
+  #header {
+    padding: 14px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #header-ul {
+    font-size: 13px;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 6px;
+  }
+
+  /* Adjust swiper-part layout for small mobile screens */
+  .swiper-part {
+    width: 50%;
+    padding: 6px;
+  }
+
+  /* Adjust swiper image size */
+  .swiper-part-img {
+    max-width: 20%; /* Reduce the width to 90% of the parent container */
+    height: 20px; /* Maintain aspect ratio */
+    max-height: 50px; /* Limit the height to 250px to prevent it from being too large */
+  }
+
+  /* Adjust CTA button font size and full width */
+  .cta-button {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  /* Adjust logo size for very small screens */
+  #logo-img {
+    height: 80px;
+  }
+
+  /* Adjust important links section for smaller text */
+  .important-links-section h2 {
+    font-size: 1.3rem;
+  }
+
+  .important-links-section li {
+    font-size: 0.75rem;
+  }
+
+  /* Stacked layout for additional-info on small screens */
+  .additional-info {
+    flex-direction: column;
+  }
+
+  .info-left,
+  .info-right {
+    flex: 0 0 100%;
+    padding-left: 0;
+    margin-bottom: 8px;
+  }
+
+  /* Adjust header menu font size */
+  .header-li {
+    font-size: 0.9rem;
+  }
+
+  /* Adjust content header font size */
+  .content-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .content-header p {
+    font-size: 1rem;
+  }
+
+  /* Adjust input fields and buttons */
+  input,
+  select {
+    width: 280px;
+    height: 28px;
+    margin: 8px;
+    padding: 5px;
+    font-size: 0.9rem;
+  }
+
+  button {
+    width: 90px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+
+  /* User profile card adjustments */
+  #user-card-div,
+  #user-content {
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+
+  #user-img {
+    height: 40px;
+    width: 40px;
+  }
+
+  textarea {
+    width: 280px;
+    height: 100px;
+    font-size: 0.9rem;
+  }
+}
+
+
+/* ===== Tablet (820x1180px) Styles ===== */
+@media (max-width: 820px) and (max-height: 1180px) {
+  /* Header adjustments for medium screen sizes */
+  #header {
+    padding: 10px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #header-ul {
+    font-size: 15px;
+    padding: 1px;
+  }
+
+  /* Adjust swiper-part layout */
+  .swiper-part {
+    width: 45%; /* Adjust width to make it more spacious */
+    padding: 15px;
+  }
+
+  .swiper-part-img {
+    max-width: 85%; /* Make images a bit smaller */
+    height: auto;
+    max-height: 300px; /* Increased height for better visibility */
+  }
+
+  /* Adjust CTA button */
+  .cta-button {
+    width: 45%;
+    font-size: 1.1rem;
+    margin: 10px auto;
+  }
+
+  /* Logo adjustments */
+  #logo-img {
+    height: 60px;
+  }
+
+  /* Adjust important links section font size */
+  .important-links-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .important-links-section li {
+    font-size: 1rem;
+  }
+
+  /* Stacked layout for additional-info on smaller screens */
+  .additional-info {
+    flex-direction: row; /* Keep row layout for medium screens */
+  }
+
+  .info-left,
+  .info-right {
+    flex: 0 0 48%; /* Slightly more space on both sides */
+    padding-left: 10px;
+  }
+
+  /* Adjust header menu font size */
+  .header-li {
+    font-size: 1.1rem;
+  }
+
+  /* Adjust content header font size */
+  .content-header h1 {
+    font-size: 2rem;
+  }
+
+  .content-header p {
+    font-size: 1.1rem;
+  }
+
+  /* Adjust input fields and buttons */
+  input,
+  select {
+    width: 320px;
+    height: 35px;
+    margin: 12px;
+    padding: 6px;
+    font-size: 1rem;
+  }
+
+  button {
+    width: 120px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  /* User profile card adjustments */
+  #user-card-div,
+  #user-content {
+    padding: 20px;
+    font-size: 1rem;
+  }
+
+  #user-img {
+    height: 50px;
+    width: 50px;
+  }
+
+  textarea {
+    width: 320px;
+    height: 120px;
+    font-size: 1rem;
+  }
+}
 
 /* below css is for userprofile */
 #user-profile{
@@ -516,35 +976,149 @@ button {
   font-size: 20px;
   margin: 5px;
 }
-/* below css is for complaintform.jsx */
-textarea{
-  width: 100%;
-  border: 2px solid #169839;
-  color: #169839;
-  font-size: 2em;
+
+
+/* below css is for complaintlist */
+.text-4xl {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+hr {
+  margin: 20px 0;
+}
+
+.error-text {
+  color: red;
+}
+
+.complaint-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.complaint-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.complaint-card h3 {
+  margin-top: 0;
+}
+
+.complaint-card p {
+  margin: 5px 0;
 }
 
 
-/* below css is for qrcodescanner.jsx */
+
+/* below css is  for qrcodescanner */
 #qr-scanner-div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+#qr-scanner-div h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
 #reader {
-  width: 500px;
-  height: fit-content;
-  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
 }
 
 .error {
   color: red;
-  font-weight: bold;
+  margin-top: 10px;
 }
 
 .success {
   color: green;
-  font-weight: bold;
+  margin-top: 10px;
+}
+
+
+
+/* below css is for feedbacks */
+.feedback-container {
+  text-align: center;
+  width: 80%;
+  margin: auto;
+}
+
+.feedback-list {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.feedback-card {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 8px;
+  width: 22%;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.feedback-buttons {
+  margin-top: 15px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Animation effects */
+.fade-in {
+  opacity: 1;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
+.slide-in {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.feedback-card.slide-in {
+  transform: translateY(-10px);
+  opacity: 0;
+  animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

@@ -1,14 +1,24 @@
-import foodimg1 from '../assets/images/foodimg1.png';
-import foodimg2 from '../assets/images/foodimg2.png';
-import foodimg4 from '../assets/images/foodimg4.png';
-import foodimg5 from '../assets/images/foodimg5.png';
+import food4 from '../assets/images/food4.webp';
+import food2 from '../assets/images/food2.webp';
+import food3 from '../assets/images/food3.jpg';
+import food1 from '../assets/images/food1.webp';
+import food5 from '../assets/images/food5.avif';
+import food6 from '../assets/images/food6.jpg';
+import food7 from '../assets/images/food7.webp';
+import food8 from '../assets/images/food8.jpeg';
 import '../assets/styles.css';
+import FeedbackList from './Feedback/FeedbackList';
+import ContactUs from './ContactUs';
 
 const slides = [
-  { img: foodimg1, text: 'Satisfy your cravings, everyday.' },
-  { img: foodimg2, text: 'A world of flavours, right here.' },
-  { img: foodimg4, text: 'Quality food, served with love.' },
-  { img: foodimg5, text: 'The perfect blend of taste and affordability.' }
+  { img: food4, text: 'Satisfy your cravings, everyday.' },
+  { img: food2, text: 'A world of flavours, right here.' },
+  { img: food3, text: 'Quality food, served with love.' },
+  { img: food1, text: 'The perfect blend of taste and affordability.' },
+  { img: food5, text: 'The perfect blend of taste and affordability.' },
+  { img: food6, text: 'Satisfy your cravings, everyday.' },
+  { img: food7, text: 'Quality food, served with love.' },
+  { img: food8, text: 'Quality food, served with love.' }
 ];
 
 import '../assets/styles.css';
@@ -41,6 +51,11 @@ const Content = () => {
         <button className="cta-button">Get Enrolled</button>
       </div>
 
+      <div>
+        <h2>What Students Say!</h2>
+        <FeedbackList />
+      </div>
+
       {/* Important Links Section */}
       <div className="important-links-section">
         <h2>Important Links</h2>
@@ -68,6 +83,11 @@ const Content = () => {
           <p>We are committed to providing fresh, hygienic, and nutritious meals with a focus on quality. Enjoy the convenience of online meal management for a happy, healthy dining experience.</p>
         </div>
       </div>
+
+      <div>
+        <ContactUs />
+      </div>
+
     </section>
   );
 };

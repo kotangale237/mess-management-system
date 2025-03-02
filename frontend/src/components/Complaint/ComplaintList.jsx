@@ -39,10 +39,10 @@ const ComplaintList = () => {
         <div className="complaint-list">
           {complaints.map((complaint) => (
             <div key={complaint.id} className="complaint-card">
-              <h3>Complaint #{complaint.id}</h3>
+              <h3>Complaint ID: {complaint.id}</h3>
               <p><strong>Category:</strong> {complaint.category}</p>
               <p><strong>Description:</strong> {complaint.description}</p>
-              <p><strong>Timestamp:</strong> {new Date(complaint.timestamp).toLocaleString()}</p>
+              <p><strong>Complaint was registered on:</strong> {new Date(complaint.timestamp).toLocaleString()}</p>
               <p><strong>Status:</strong> {complaint.status}</p>
             </div>
           ))}
