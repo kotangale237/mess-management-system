@@ -1,0 +1,110 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Academics\\PR201\\messchaingaurav\\messchaingaurav\\messchain\\backend\\contracts\\ComplaintSystem.sol": {
+      "lastModificationDate": 1739597966552,
+      "contentHash": "be10f9db1e6c9806ad7ca1fde9eb0420",
+      "sourceName": "contracts/ComplaintSystem.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ComplaintSystem"
+      ]
+    },
+    "C:\\Academics\\PR201\\messchaingaurav\\messchaingaurav\\messchain\\backend\\contracts\\MessAttendance.sol": {
+      "lastModificationDate": 1739713998498,
+      "contentHash": "c1d535f3f6679658a0418bc80d366160",
+      "sourceName": "contracts/MessAttendance.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MessAttendance"
+      ]
+    },
+    "C:\\Academics\\PR201\\messchaingaurav\\messchaingaurav\\messchain\\backend\\contracts\\VotingSystem.sol": {
+      "lastModificationDate": 1739688598933,
+      "contentHash": "7763bdb64c3ba2fa8b50934caf53d2d2",
+      "sourceName": "contracts/VotingSystem.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "VotingSystem"
+      ]
+    }
+  }
+}
