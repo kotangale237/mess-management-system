@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import Header from "../Header";
 import Footer from "../Footer";
-import UserCard from "./StudentCard";
-import UserContent from "./StudentContent";
+import StudentCard from "./StudentCard";
+import StudentContent from "./StudentContent";
 import { useNavigate } from "react-router-dom";
 
-const UserProfile = () => {
+const StudentProfile = () => {
   const [content, setContent] = useState("user-info");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,13 +42,13 @@ const UserProfile = () => {
           <p>Loading...</p>
         ) : (
           <>
-            <UserCard
+            <StudentCard
               user={user}
               content={content}
               handleContent={handleContent}
               handleLogout={handleLogout}
             />
-            <UserContent content={content} user={user} />
+            <StudentContent content={content} user={user} />
           </>
         )}
       </div>
@@ -57,4 +57,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default StudentProfile;

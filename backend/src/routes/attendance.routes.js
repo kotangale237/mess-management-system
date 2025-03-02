@@ -1,8 +1,12 @@
 import { Router } from 'express';
-import { attendance } from "../controllers/attendance.controller.js"
+import { 
+    recordAttendance,
+    getAttendance,
+} from "../controllers/attendance.controller.js"
 
 const router = Router();
 
-router.route('/').get(attendance);
+router.route('/record-attendance').post(recordAttendance);
+router.route('/get-attendance/:dateHash').get(getAttendance);
 
 export default router

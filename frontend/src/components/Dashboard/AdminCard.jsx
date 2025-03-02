@@ -1,7 +1,7 @@
 import React from 'react';
 import userImage from '../../assets/images/foodimg4.png'; // Default image
 
-const StudentCard = ({ user, content, handleContent, handleLogout }) => {
+const AdminCard = ({ user, content, handleContent, handleLogout }) => {
   const handleClick = (str) => {
     handleContent(str);
   };
@@ -10,20 +10,20 @@ const StudentCard = ({ user, content, handleContent, handleLogout }) => {
     <div id="user-card-div">
       <img id="user-img" src={user?.image || userImage} alt="User" />
       <ul id="user-card-ul">
-        <li className="user-card-li">
+        {/* <li className="user-card-li">
           <button onClick={() => handleClick('user-info')}>Profile</button>
-        </li>
+        </li> */}
         <li className="user-card-li">
-          <button onClick={() => handleClick('complaint')}>Complaint</button>
+          <button onClick={() => handleClick('complaints')}>Complaints</button>
         </li>
-        <li className="user-card-li">
+        {/* <li className="user-card-li">
           <button onClick={() => handleClick('feedback')}>Feedback</button>
         </li>
         <li className="user-card-li">
           <button onClick={() => handleClick('qr-code')}>QR Code</button>
-        </li>
+        </li> */}
         <li className="user-card-li">
-          <button onClick={() => handleClick('vote')}>Vote</button>
+          <button onClick={() => handleClick('vote')}>Create Poll</button>
         </li>
       </ul>
       <div>
@@ -33,4 +33,4 @@ const StudentCard = ({ user, content, handleContent, handleLogout }) => {
   );
 };
 
-export default StudentCard;
+export default AdminCard;

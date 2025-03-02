@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import Header from "../Header";
 import Footer from "../Footer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
+import AdminCard from "./AdminCard";
+import AdminContent from "./AdminContent";
+
 
 const AdminProfile = () => {
   const [content, setContent] = useState("admin-info");
@@ -37,16 +40,22 @@ const AdminProfile = () => {
   }
 
   return (
-    <div>
+    <div id="admin-profile">
       <Header />
-      <div className="admin-profile-container">
-        <h1>Admin Profile</h1>
-        {admin && (
-          <div className="admin-info">
-            <p><strong>Name:</strong> {admin.name}</p>
-          </div>
+      <div id="admin-profile-content">
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <AdminCard
+              admin={admin}
+              content={content}
+              handleContent={handleContent}
+              handleLogout={handleLogout}
+            />
+            <AdminContent content={content} admin={admin} />
+          </>
         )}
-        <button onClick={handleLogout}>Logout</button>
       </div>
       <Footer />
     </div>
