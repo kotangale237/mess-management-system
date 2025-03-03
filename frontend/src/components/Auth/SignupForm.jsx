@@ -32,7 +32,7 @@ const SignupForm = () => {
       Cookies.set('refreshToken', response.data.data.refreshToken);
 
       // Redirect to user profile page after a short delay
-      setTimeout(() => navigate('/user-profile'), 2000);
+      setTimeout(() => navigate('/student-profile'), 2000);
     } catch (error) {
       console.error('Error submitting form:', error);
       setServerError(error.response?.data?.message || "Signup failed. Please try again.");
