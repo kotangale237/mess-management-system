@@ -1,126 +1,214 @@
-import {contract} from "../utils/VotingSystemContract.js"
-import { ethers } from "ethers"; 
-import {Voting} from "../models/voting.model.js"
-import {ApiError} from "../utils/ApiError.js"
-import {ApiResponse} from "../utils/ApiResponse.js"
-import {asyncHandler} from "../utils/asyncHandler.js"
+import { contract } from "../utils/VotingSystemContract.js";
+import { ethers } from "ethers";
+import { FoodByteTransaction } from "../models/foodbyteTransaction.model.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
-const getPollStatus =  async (req, res) => {
-  const { pollId } = req.params;
+const createPoll = asyncHandler(async (req, res) => {
+    let { title, pollType, deadline, options, candidateRollnos, names, branches, cgpas } = req.body;
 
-  try {
-      const status = await contract.getPollStatus(pollId);
-      res.status(201).json(
-        new ApiResponse(201, {  status })
-      )
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-}
+    const pollTypeEnum = pollType === "general" ? 0 : 1;
 
-const addCandidateToPoll = async (req, res) => {
-  const { pollID } = req.params;
-  const { name, rollno, branch, cgpa } = req.body;
+    options = options || [];
+    candidateRollnos = candidateRollnos || [];
+    names = names || [];
+    branches = branches || [];
+    cgpas = cgpas || [];
 
-  try {
-    const scaledCgpa = Math.floor(cgpa * 10); // Scale the CGPA to remove the decimal
-    const tx = await contract.addCandidateToPoll(pollID, name, rollno, branch, scaledCgpa);
-    await tx.wait(); // Wait for the transaction to be mined
-
-    res.status(201).json(
-      new ApiResponse(201, { tx }, "Candidate added successfully")
-    )
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-  
-
-const createPoll = async (req, res) => {
-  const { title, description, deadline } = req.body;
-
-  try {
-    const tx = await contract.createPoll(title, description, deadline);
+    const tx = await contract.createPoll(title, pollTypeEnum, deadline, options, candidateRollnos, names, branches, cgpas);
     await tx.wait();
-    res.status(200).json({ message: 'Poll created successfully', transactionHash: tx.hash });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
+    // Add 10 FoodBytes to all candidates
+    for (let rollno of candidateRollnos) {
+        await FoodByteTransaction.create({
+            rollno,
+            amount: 10,
+            type: "reward",
+            reason: "Candidate participation"
+        });
+    }
 
-const voteInPoll = async (req, res) => {
-  const { pollId } = req.params;
-  const { rollno } = req.body;
+    res.json(new ApiResponse(200, "Poll created successfully"));
+});
 
-  try {
-      const tx = await contract.voteInPoll(pollId, rollno);
-      await tx.wait();
-      res.status(200).json({ message: 'Vote cast successfully', transactionHash: tx.hash });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-}
+const voteInPoll = asyncHandler(async (req, res) => {
+    const { pollId, rollno, selectedChoice } = req.body;
+    const tx = await contract.voteInPoll(pollId, rollno, selectedChoice);
+    await tx.wait();
 
-const getCandidateRollnos = async (req, res) => {
-  const { pollId } = req.params;
+    // Reward with 1 FoodByteTransaction
+    await FoodByteTransaction.create({
+        rollno,
+        amount: 1,
+        type: "reward",
+        reason: "Poll vote"
+    });
 
-  try {
-      const rollNumbers = await contract.getCandidateRollnos(pollId);
-      res.status(200).json({ candidates: rollNumbers });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-}
+    res.json(new ApiResponse(200, "Vote cast successfully"));
+});
 
-const getCandidateDetails = async (req, res) => {
-  const { pollId, rollno } = req.params;
+// 📌 3. Get Live Polls
+const getLivePolls = asyncHandler(async (req, res) => {
+    const pollCount = Number(await contract.pollCount());
+    const polls = [];
 
-  try {
-      const candidate = await contract.getCandidate(pollId, rollno);
-      res.status(200).json({
-          name: candidate[0],
-          branch: candidate[1],
-          cgpa: candidate[2],
-          voteCount: candidate[3]
-      });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-}
+    for (let i = 1; i <= pollCount; i++) {
+        const poll = await contract.polls(i);
+        const options = await contract.getGeneralPollOptions(i).catch(() => []);
+        const candidates = await contract.getCommitteePollCandidates(i).catch(() => []);
 
-const getPollResults = async (req, res) => {
-  const { pollId } = req.params;
+        polls.push({
+            id: i,
+            title: poll.title,
+            pollType: Number(poll.pollType),
+            deadline: Number(poll.deadline),
+            options,
+            candidates: candidates.map((c) => ({
+                rollno: c.rollno,
+                name: c.name,
+                branch: c.branch,
+                cgpa: Number(c.cgpa),
+                voteCount: Number(c.voteCount)
+            }))
+        });
+    }
 
-  try {
-      const results = await contract.getPollResults(pollId);
-      res.status(200).json({ results });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-}
+    res.json({ success: true, polls });
+});
 
-const endPoll = async (req, res) => {
-  const { pollId } = req.params;
+// 📌 4. Get Voted Polls
+const getVotedPolls = asyncHandler(async (req, res) => {
+    const rollno = req.query.rollno;
+    const pollCount = await contract.pollCount();
+    const votedPolls = [];
 
-  try {
-      const tx = await contract.checkAndEmitPollEnd(pollId);
-      await tx.wait();
-      res.status(200).json({ message: 'Poll ended event emitted', transactionHash: tx.hash });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-}
+    for (let i = 1; i <= pollCount; i++) {
+        const hasVoted = await contract.hasStudentVoted(i, rollno);
+        if (hasVoted) {
+            const poll = await contract.polls(i);
+            const selected = await contract.getStudentVote(i, rollno);
+            votedPolls.push({
+                id: i,
+                title: poll.title,
+                pollType: Number(poll.pollType),
+                deadline: Number(poll.deadline),
+                selectedChoice: selected
+            });
+        }
+    }
+
+    res.json({ success: true, polls: votedPolls });
+});
+
+// 📌 5. Get Poll Status
+const getPollStatus = asyncHandler(async (req, res) => {
+    const pollId = req.params.pollId;
+    const status = await contract.getPollStatus(pollId);
+    res.json({ success: true, status });
+});
+
+// 📌 6. Get General Poll Options
+const getGeneralPollOptions = asyncHandler(async (req, res) => {
+    const pollId = req.params.pollId;
+    const options = await contract.getGeneralPollOptions(pollId);
+    res.json({ success: true, options });
+});
+
+// 📌 7. Get Committee Poll Candidates
+const getCommitteePollCandidates = asyncHandler(async (req, res) => {
+    const pollId = req.params.pollId;
+    const candidates = await contract.getCommitteePollCandidates(pollId);
+    res.json({ success: true, candidates });
+});
+
+// 📌 8. Get Poll Results
+const getPollResults = asyncHandler(async (req, res) => {
+    const pollId = req.params.pollId;
+    const results = await contract.getPollResults(pollId);
+    res.json({ success: true, results });
+});
+
+// ---------------- FoodByteTransaction Management ----------------
+
+const getFoodByteHistory = asyncHandler(async (req, res) => {
+    const { rollno } = req.params;
+    const history = await FoodByteTransaction.find({ rollno }).sort({ createdAt: -1 });
+    res.json(new ApiResponse(200, history));
+});
+
+const deductFoodByteForNonParticipation = asyncHandler(async (req, res) => {
+    const { rollno, reason } = req.body;
+    await FoodByteTransaction.create({
+        rollno,
+        amount: -1,
+        type: "penalty",
+        reason: reason || "Missed poll participation"
+    });
+    res.json(new ApiResponse(200, "Penalty deducted"));
+});
+
+// ---------------- Time & Duration Management ----------------
+
+const updateVotingDuration = asyncHandler(async (req, res) => {
+    const { duration } = req.body;
+    const tx = await contract.updateVotingDuration(duration);
+    await tx.wait();
+    res.json(new ApiResponse(200, "Voting duration updated"));
+});
+
+const updateCandidateEnrollmentTime = asyncHandler(async (req, res) => {
+    const { time } = req.body;
+    const tx = await contract.updateCandidateEnrollmentTime(time);
+    await tx.wait();
+    res.json(new ApiResponse(200, "Candidate enrollment time updated"));
+});
+
+const updateAdminGracePeriod = asyncHandler(async (req, res) => {
+    const { period } = req.body;
+    const tx = await contract.updateAdminGracePeriod(period);
+    await tx.wait();
+    res.json(new ApiResponse(200, "Admin grace period updated"));
+});
+
+const updateSemesterStartDates = asyncHandler(async (req, res) => {
+    const { janDate, augDate } = req.body;
+    const tx = await contract.updateSemesterStartDates(janDate, augDate);
+    await tx.wait();
+    res.json(new ApiResponse(200, "Semester start dates updated"));
+});
+
+// ---------------- Monthly Cron Logic ----------------
+
+const creditMonthlyToCommittee = asyncHandler(async (req, res) => {
+    const members = await contract.getCommitteeMembers();
+    for (let rollno of members) {
+        await FoodByteTransaction.create({
+            rollno,
+            amount: 50,
+            type: "reward",
+            reason: "Monthly committee reward"
+        });
+    }
+    res.json(new ApiResponse(200, "Monthly reward sent to committee members"));
+});
+
 
 
 export {
     createPoll,
-    addCandidateToPoll,
-    getPollStatus,
     voteInPoll,
-    getCandidateRollnos,
-    getCandidateDetails,
+    getLivePolls,
+    getVotedPolls,
+    getPollStatus,
+    getGeneralPollOptions,
+    getCommitteePollCandidates,
     getPollResults,
-    endPoll
-}
-
+    getFoodByteHistory,
+    deductFoodByteForNonParticipation,
+    updateVotingDuration,
+    updateCandidateEnrollmentTime,
+    updateAdminGracePeriod,
+    // updateSemesterStartDates,
+    creditMonthlyToCommittee
+};

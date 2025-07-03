@@ -47,6 +47,10 @@ const studentSchema = new Schema(
         regmess: {
             type: String, enum: ['mess1', 'mess2'], 
         },
+        foodBytes: {
+            type: Number,
+            default: 0
+        },          
         balance: { 
             type: Number,
         },   

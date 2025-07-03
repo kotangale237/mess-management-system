@@ -2,142 +2,253 @@
 pragma solidity ^0.8.0;
 
 contract VotingSystem {
-    struct Candidate {
-        string name;
-        string rollno;
-        string branch;
-        uint cgpa;
-        uint voteCount;
+    address public admin;
+
+    constructor() {
+        admin = msg.sender;
     }
+
+    // --------------------
+    // STRUCTS
+    // --------------------
+
+    enum PollType { Committee, General }
 
     struct Poll {
+        uint id;
         string title;
-        string description;
-        uint256 deadline;
-        string[] candidateRollnos;
-        mapping(string => Candidate) candidates;
-        mapping(address => bool) hasVoted;
+        PollType pollType;
+        bool isInitiated;
+        bool isStarted;
+        bool isCompleted;
+        uint startTime;
+        uint endTime;
+        uint candidateJoinStart;
+        uint candidateJoinEnd;
+        string[] options; // For general polls
+        string creatorRoll;
+        mapping(string => bool) hasVoted;
+        mapping(string => uint) votes; // option => votes
+        mapping(string => uint) votedOption; // roll => option index
+        string[] voters;
+        string[] candidates; // For committee polls
     }
 
-    address public owner;
-    uint256 public pollCount;
-    mapping(uint256 => Poll) public polls;
+    uint public pollCount;
+    mapping(uint => Poll) public polls;
+    mapping(string => bool) public isCommitteeMember;
+    string[] public currentCommitteeMembers;
 
-    event PollCreated(uint256 pollId, string title, string description, uint256 deadline);
-    event CandidateAdded(uint256 pollId, string rollno, string name, string branch, uint cgpa);
-    event PollEnded(uint256 pollId, string title);
-    event Voted(uint256 pollId, address voter, string rollno);
+    // --------------------
+    // DURATION VARIABLES
+    // --------------------
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can perform this action");
+    uint public candidateJoinDuration = 1 days;
+    uint public candidateJoinExtension = 1 days;
+    uint public votingDuration = 2 days;
+    uint public adminGracePeriod = 15 days;
+
+    uint public semesterStartDateJan = 1704067200; // Jan 1, 2024
+    uint public semesterStartDateAug = 1722470400; // Aug 1, 2024
+
+    // --------------------
+    // EVENTS
+    // --------------------
+
+    event PollInitiated(uint pollId, string byRoll, PollType pollType);
+    event CandidateJoined(uint pollId, string rollNumber);
+    event PollStarted(uint pollId);
+    event Voted(uint pollId, string rollNumber, string option);
+    event PollCompleted(uint pollId);
+    event CommitteeUpdated(string[] newMembers);
+
+    // FoodByte Events
+    event VotedAndRewarded(string rollNumber, uint pollId, string pollType);
+    event CandidateRegistered(string rollNumber, uint pollId);
+    event CommitteeMemberElected(string rollNumber, uint pollId);
+    event VoteMissed(string rollNumber, uint pollId);
+    event CandidateNotParticipated(string rollNumber, uint pollId);
+
+    // --------------------
+    // MODIFIERS
+    // --------------------
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin");
         _;
     }
 
-    constructor() {
-        owner = msg.sender;
+    modifier onlyAdminOrCommittee() {
+        require(msg.sender == admin || isCommitteeMemberByAddress[msg.sender], "Unauthorized");
+        _;
     }
 
-    // Combined function to create a poll and add candidates
-    function createPoll(
-        string memory _title,
-        string memory _description,
-        uint256 _deadline
-        ) public onlyOwner {
-        require(_deadline > block.timestamp, "Deadline must be in the future");
+    // Mapping to simulate rollNumber-to-address (for committee members)
+    mapping(address => bool) public isCommitteeMemberByAddress;
+
+    // --------------------
+    // API-CONTROLLED UPDATABLE TIMES
+    // --------------------
+
+    function updateDurations(
+        uint _candidateJoinDuration,
+        uint _candidateJoinExtension,
+        uint _votingDuration,
+        uint _adminGracePeriod
+    ) external onlyAdmin {
+        candidateJoinDuration = _candidateJoinDuration;
+        candidateJoinExtension = _candidateJoinExtension;
+        votingDuration = _votingDuration;
+        adminGracePeriod = _adminGracePeriod;
+    }
+
+    function updateSemesterStartDates(uint janTimestamp, uint augTimestamp) external onlyAdmin {
+        semesterStartDateJan = janTimestamp;
+        semesterStartDateAug = augTimestamp;
+    }
+
+    // --------------------
+    // POLL FUNCTIONS
+    // --------------------
+
+    function initiateCommitteePoll(string memory rollNumber) external {
+        require(
+            block.timestamp >= getCurrentSemesterStart() + adminGracePeriod,
+            "Admin grace period not over"
+        );
 
         pollCount++;
-        Poll storage newPoll = polls[pollCount];
-        newPoll.title = _title;
-        newPoll.description = _description;
-        newPoll.deadline = _deadline;
+        Poll storage p = polls[pollCount];
+        p.id = pollCount;
+        p.pollType = PollType.Committee;
+        p.isInitiated = true;
+        p.creatorRoll = rollNumber;
+        p.title = "Mess Committee Election";
+        p.candidateJoinStart = block.timestamp;
+        p.candidateJoinEnd = block.timestamp + candidateJoinDuration;
 
-        emit PollCreated(pollCount, _title, _description, _deadline);
+        emit PollInitiated(pollCount, rollNumber, PollType.Committee);
     }
 
-    function addCandidateToPoll(
-        uint256 _pollId,
-        string memory _name,
-        string memory _rollno,
-        string memory _branch,
-        uint _cgpa
-        ) public onlyOwner {
-        Poll storage poll = polls[_pollId];
-        require(block.timestamp < poll.deadline, "Cannot add candidates after the poll has started");
-        require(bytes(poll.candidates[_rollno].rollno).length == 0, "Candidate already exists in this poll");
+    function createGeneralPoll(
+        string memory title,
+        string[] memory options,
+        uint duration,
+        string memory creatorRoll
+    ) external {
+        require(msg.sender == admin || isCommitteeMemberByAddress[msg.sender], "Not allowed");
 
-        Candidate memory newCandidate = Candidate({
-            name: _name,
-            rollno: _rollno,
-            branch: _branch,
-            cgpa: _cgpa,
-            voteCount: 0
-        });
+        pollCount++;
+        Poll storage p = polls[pollCount];
+        p.id = pollCount;
+        p.title = title;
+        p.pollType = PollType.General;
+        p.options = options;
+        p.startTime = block.timestamp;
+        p.endTime = block.timestamp + duration;
+        p.isInitiated = true;
+        p.isStarted = true;
 
-        poll.candidates[_rollno] = newCandidate;
-        poll.candidateRollnos.push(_rollno);
-
-        emit CandidateAdded(_pollId, _rollno, _name, _branch, _cgpa);
+        emit PollInitiated(pollCount, creatorRoll, PollType.General);
+        emit PollStarted(pollCount);
     }
 
+    function joinCandidate(uint pollId, string memory rollNumber) external {
+        Poll storage p = polls[pollId];
+        require(p.pollType == PollType.Committee, "Only for committee poll");
+        require(block.timestamp >= p.candidateJoinStart && block.timestamp <= p.candidateJoinEnd, "Not in candidate join window");
 
-    // Vote for a candidate in a specific poll
-    function voteInPoll(uint256 _pollId, string memory _rollno) public {
-        Poll storage poll = polls[_pollId];
-        require(block.timestamp < poll.deadline, "Poll has already ended");
-        require(!poll.hasVoted[msg.sender], "You have already voted in this poll");
-        require(bytes(poll.candidates[_rollno].rollno).length > 0, "Invalid candidate");
-
-        poll.candidates[_rollno].voteCount++;
-        poll.hasVoted[msg.sender] = true;
-
-        emit Voted(_pollId, msg.sender, _rollno);
+        p.candidates.push(rollNumber);
+        emit CandidateJoined(pollId, rollNumber);
+        emit CandidateRegistered(rollNumber, pollId);
     }
 
-    // Function to check if a poll has ended and emit the event
-    function checkAndEmitPollEnd(uint256 _pollId) public {
-        Poll storage poll = polls[_pollId];
-        require(block.timestamp >= poll.deadline, "Poll is still live");
+    function startVotingPhase(uint pollId) external onlyAdmin {
+        Poll storage p = polls[pollId];
+        require(p.candidates.length >= 2, "Not enough candidates");
 
-        emit PollEnded(_pollId, poll.title);
+        p.isStarted = true;
+        p.startTime = block.timestamp;
+        p.endTime = block.timestamp + votingDuration;
+
+        emit PollStarted(pollId);
     }
 
-    // Get the status of the poll (Live or Ended)
-    function getPollStatus(uint256 _pollId) public view returns (string memory) {
-        Poll storage poll = polls[_pollId];
-        if (block.timestamp < poll.deadline) {
-            return "Live";
-        } else {
-            return "Ended";
+    function vote(uint pollId, string memory rollNumber, uint optionIndex) external {
+        Poll storage p = polls[pollId];
+        require(p.isStarted, "Voting not started");
+        require(block.timestamp >= p.startTime && block.timestamp <= p.endTime, "Voting closed");
+        require(!p.hasVoted[rollNumber], "Already voted");
+
+        p.hasVoted[rollNumber] = true;
+        p.votedOption[rollNumber] = optionIndex;
+        p.votes[p.options[optionIndex]]++;
+        p.voters.push(rollNumber);
+
+        emit Voted(pollId, rollNumber, p.options[optionIndex]);
+        emit VotedAndRewarded(rollNumber, pollId, p.pollType == PollType.Committee ? "Committee" : "General");
+    }
+
+    function completePoll(uint pollId) external onlyAdmin {
+        Poll storage p = polls[pollId];
+        require(!p.isCompleted && block.timestamp > p.endTime, "Cannot complete yet");
+
+        p.isCompleted = true;
+        emit PollCompleted(pollId);
+
+        if (p.pollType == PollType.Committee) {
+            updateCommitteeMembers(pollId);
         }
     }
 
-    // Get all candidate roll numbers for a specific poll
-    function getCandidateRollnos(uint256 _pollId) public view returns (string[] memory) {
-        Poll storage poll = polls[_pollId];
-        return poll.candidateRollnos;
+    function updateCommitteeMembers(uint pollId) internal {
+        // Clear old members
+        for (uint i = 0; i < currentCommitteeMembers.length; i++) {
+            isCommitteeMember[currentCommitteeMembers[i]] = false;
+        }
+        delete currentCommitteeMembers;
+
+        // Get top 5 from this poll
+        Poll storage p = polls[pollId];
+        string[] memory top = getTopCandidates(pollId);
+        for (uint i = 0; i < top.length && i < 5; i++) {
+            isCommitteeMember[top[i]] = true;
+            currentCommitteeMembers.push(top[i]);
+            emit CommitteeMemberElected(top[i], pollId);
+        }
+
+        emit CommitteeUpdated(currentCommitteeMembers);
     }
 
-    // Get poll results sorted by vote count
-    function getPollResults(uint256 _pollId) public view returns (Candidate[] memory) {
-        Poll storage poll = polls[_pollId];
-        uint256 numCandidates = poll.candidateRollnos.length;
-        Candidate[] memory sortedCandidates = new Candidate[](numCandidates);
+    // --------------------
+    // UTILITY FUNCTIONS
+    // --------------------
 
-        for (uint256 i = 0; i < numCandidates; i++) {
-            sortedCandidates[i] = poll.candidates[poll.candidateRollnos[i]];
-        }
+    function getVotedCandidate(uint pollId, string memory rollNumber) external view returns (string memory) {
+        Poll storage p = polls[pollId];
+        require(p.hasVoted[rollNumber], "Student hasn't voted");
+        return p.options[p.votedOption[rollNumber]];
+    }
 
-        // Sort candidates by vote count
-        for (uint256 i = 0; i < numCandidates; i++) {
-            for (uint256 j = i + 1; j < numCandidates; j++) {
-                if (sortedCandidates[j].voteCount > sortedCandidates[i].voteCount) {
-                    Candidate memory temp = sortedCandidates[i];
-                    sortedCandidates[i] = sortedCandidates[j];
-                    sortedCandidates[j] = temp;
-                }
-            }
-        }
+    function getCurrentSemesterStart() public view returns (uint) {
+        uint year = getYear(block.timestamp);
+        uint janStart = semesterStartDateJan;
+        uint augStart = semesterStartDateAug;
 
-        return sortedCandidates;
+        if (block.timestamp >= augStart) return augStart;
+        return janStart;
+    }
+
+    function getYear(uint timestamp) internal pure returns (uint) {
+        return (timestamp / 31556926) + 1970; // rough conversion
+    }
+
+    function getTopCandidates(uint pollId) public view returns (string[] memory) {
+        Poll storage p = polls[pollId];
+        return p.candidates; // Replace with actual sorting logic if needed
+    }
+
+    function getPollVoters(uint pollId) external view returns (string[] memory) {
+        return polls[pollId].voters;
     }
 }
