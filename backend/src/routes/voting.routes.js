@@ -1,42 +1,59 @@
 import { Router } from 'express';
 import {
-    createPoll,
-    voteInPoll,
-    getLivePolls,
-    getVotedPolls,
-    getPollStatus,
-    getGeneralPollOptions,
-    getCommitteePollCandidates,
-    getPollResults,
-    getFoodByteHistory,
-    deductFoodByteForNonParticipation,
-    updateVotingDuration,
-    updateCandidateEnrollmentTime,
-    updateAdminGracePeriod,
-    // updateSemesterStartDates,
-    creditMonthlyToCommittee
+  initiateCommitteePoll,
+  joinCandidate,
+  startVotingPhase,
+  completePoll,
+  createGeneralPoll,
+  vote,
+  getVotedCandidate,
+  getPollVoters,
+  getVotedPolls,
+  updateDurations,
+  getTopCandidates,
+  getCurrentCommitteeMembers,
+  isCommitteeMember,
+  getPoll,
+  getPollCount,
+  getPollStatus,
+  getLivePolls,
+  creditMonthlyToCommittee,
+  deductFoodByte,
+  getPollDetails,
+  dropIfNoCandidates,
+  handleLowCandidateCount
 } from "../controllers/voting.controller.js"
 import {verifyJWT} from "../middlewares/auth.middleware.js"
 
 const router = Router();
 // router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
-router.route("/create-poll").post(createPoll);
-router.route("/polls").get(getLivePolls);
-router.route("/voted-polls").get(getVotedPolls);
-router.route("/vote").post(voteInPoll);
-router.route("/committee-poll-candidates/:pollId").get(getCommitteePollCandidates);
-router.route("/poll-status/:pollId").get(getPollStatus);
-router.route("/general-poll-options/:pollId").get(getGeneralPollOptions);
-router.route("/poll-results/:pollId").get(getPollResults);
-router.route("/foodbyte-history").get(getFoodByteHistory);
-router.route("/deduct-foodbyte").post(deductFoodByteForNonParticipation);
-router.route("/setVotingDuration").post(updateVotingDuration);
-router.route("/setCandidateEnrollmentTime").post(updateCandidateEnrollmentTime);
-router.route("/credit-monthly-to-committee").post(creditMonthlyToCommittee);
-// router.route("/setSemesterStartDateJan").post(updateSemesterStartDates("January"));
-// router.route("/setSemesterStartDateAug").post(updateSemesterStartDates("August"));
-router.route("/setAdminGracePeriod").post(updateAdminGracePeriod);
+router.post("/initiate-committee-poll", initiateCommitteePoll);
+router.post("/join-candidate", joinCandidate);
+router.post("/start-voting-phase", startVotingPhase);
+router.post("/complete-poll", completePoll);
+router.post("/create-general-poll", createGeneralPoll);
+router.post("/vote", vote);
+
+router.get("/get-voted-candidate/:pollId/:rollno", getVotedCandidate);
+router.get("/get-poll-voters/:pollId", getPollVoters);
+router.get("/voted-polls/:rollno", getVotedPolls);
+router.post("/drop-if-no-candidates", dropIfNoCandidates);
+router.post("/handle-low-candidate-count", handleLowCandidateCount);
+
+router.post("/update-durations", updateDurations);
+
+router.get("/get-top-candidates/:pollId", getTopCandidates);
+router.get("/get-current-committee-members", getCurrentCommitteeMembers);
+router.get("/is-committee-member/:rollno", isCommitteeMember);
+router.get("/get-poll/:pollId", getPoll);
+router.get("/get-poll-count", getPollCount);
+router.get("/poll-status/:pollId", getPollStatus);
+router.get("/get-live-polls", getLivePolls);
+
+router.post("/credit-monthly-to-committee", creditMonthlyToCommittee);
+router.post("/deduct-food-byte", deductFoodByte);
+
 
 export default router
 
